@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faa Store - Toko Poster</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <body data-theme="dark"></body>
+    <header>
+        <div class="logo">Faa Store</div>
+        <nav class="nav-links">
+            <a href="#hero">Beranda</a>
+            <a href="#produk">Produk</a>
+            <a href="#cara">Cara Pemesanan</a>
+            <a href="#kontak">Kontak</a>
+        </nav>
+        <div class="header-icons">
+            <button id="theme-toggle">☀️</button>
+            <button class="cart-btn" onclick="toggleCart()">
+                🛒 <span class="cart-count">0</span>
+            </button>
+            <button class="menu-toggle">☰</button>
+        </div>
+    </header>
+
+    <section id="hero" class="hero">
+        <div class="hero-img">
+            <img src="Logo.png" alt="Poster">
+        </div>
+        <div class="hero-text">
+            <h1>Toko Poster</h1>
+            <p>Hiasi Dindingmu Hidupkan Ruanganmu.</p>
+        </div>
+    </section>
+
+    <section id="produk" class="container">
+        <h2 class="section-title">Daftar Produk</h2>
+        
+        <div class="controls">
+            <div class="categories" id="category-filters">
+                <button class="cat-btn active" data-cat="all">Semua</button>
+                <button class="cat-btn" data-cat="Game">Game</button>
+                <button class="cat-btn" data-cat="Anime">Anime</button>
+                <button class="cat-btn" data-cat="Otomotif">Otomotif</button>
+                <button class="cat-btn" data-cat="Film">Film</button>
+                <button class="cat-btn" data-cat="Musik">Musik</button>
+                <button class="cat-btn" data-cat="Edukasi & Pemandangan">Edukasi & Pemandangan</button>
+            </div>
+            <select id="sort-filter" style="padding: 0.5rem;">
+                <option value="default">Urutkan: Default</option>
+                <option value="low">Harga: Termurah</option>
+                <option value="high">Harga: Termahal</option>
+            </select>
+        </div>
+
+        <div class="product-grid" id="product-list">
+            </div>
+    </section>
+
+    <section id="cara" class="container" style="background: var(--bg-color);">
+        <h2 class="section-title">Cara Pemesanan</h2>
+        <div class="steps">
+            <div class="step-card">
+                <h3>1. Pilih Produk</h3>
+                <p>Cari Poster yg anda inginkan dan Tambahkan ke keranjang.</p>
+            </div>
+            <div class="step-card">
+                <h3>2. Isi Data</h3>
+                <p>Buka keranjang, cek pesanan, lalu isi nama dan alamat pengiriman.</p>
+            </div>
+            <div class="step-card">
+                <h3>3. Kirim ke WA</h3>
+                <p>Klik tombol checkout, pesanan akan diteruskan ke WhatsApp Admin.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer id="kontak">
+        <h3>Faa Store</h3>
+        <p>WhatsApp: 0882-8975-0873 | Email: FaaStore@gmail.com</p>
+        <p>&copy; 2025 Faa's. All rights reserved.</p>
+    </footer>
+
+    <div class="cart-overlay" id="cart-overlay">
+        <div class="cart-modal">
+            <div class="cart-header">
+                <h3>Keranjang Belanja</h3>
+                <button class="close-cart" onclick="toggleCart()">✕</button>
+            </div>
+            <div class="cart-items" id="cart-items-container">
+                <p style="text-align:center; margin-top:20px;">Keranjang kosong.</p>
+            </div>
+            <div class="cart-footer">
+                <div style="display:flex; justify-content:space-between; margin-bottom:1rem; font-weight:bold;">
+                    <span>Total:</span>
+                    <span id="cart-total">Rp 0</span>
+                </div>
+                <div class="form-group">
+                    <label>Nama Penerima</label>
+                    <input type="text" id="cust-name" placeholder="Nama Lengkap">
+                </div>
+                <div class="form-group">
+                    <label>Alamat Lengkap</label>
+                    <textarea id="cust-address" rows="2" placeholder="Jalan, RT/RW, Kota..."></textarea>
+                </div>
+                <button class="checkout-btn" onclick="checkoutWA()">
+                    <span style="font-size:1.2rem">✆</span> Pesan via WhatsApp
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA PRODUK (Edit di sini) ---
+        const products = [
+            { id: 1, name: "Poster Game : Genshin Impact", category: "Game", price: 60000, img: "Poster genshin impact.jpeg" },
+            { id: 2, name: "Poster Game : Valorant", category: "Game", price: 35000, img: "Poster valorant.jpeg" },
+            { id: 3, name: "Poster Game : Honkai Star Rail", category: "Game", price: 30000, img: "Poster honkai star rail.jpeg" },
+            { id: 4, name: "Poster Game : The Lagend of Zelda", category: "Game", price: 35000, img: "Poster Zelda.jpeg" },
+            { id: 5, name: "Poster Game : Teraria", category: "Game", price: 40000, img: "Poster teraria.jpeg" },
+            { id: 6, name: "Poster Game : Resident Evil 4", category: "Game", price: 50000, img: "Poster RE4.jpeg" },
+            { id: 7, name: "Poster Game : Red Dead Redemtion 2", category: "Game", price: 62000, img: "Poster Red Dead Redemption 2.jpeg" },
+            { id: 8, name: "Poster Game : Elden Ring", category: "Game", price: 35000, img: "Poster Elden.jpeg" },
+            { id: 9, name: "Poster Anime : Jujutsu Kaisen", category: "Anime", price: 30000, img: "Poster jujutsu.jpeg" },
+            { id: 10, name: "Poster Anime : Howl's Moving Castle", category: "Anime", price: 60000, img: "Poster Howl's.jpeg" },
+            { id: 11, name: "Poster Anime : Demon Slayer", category: "Anime", price: 30000, img: "Poster kimetsu.jpeg" },
+            { id: 12, name: "Poster Anime : One Piece", category: "Anime", price: 35000, img: "Poster One Piece.jpeg" },
+            { id: 13, name: "Poster Otomotif : Lamborghini", category: "Otomotif", price: 60000, img: "Poster lambo.jpeg" },
+            { id: 14, name: "Poster Formula 1 : Sircuit Monaco", category: "Otomotif", price: 65000, img: "Poster f1.jpeg" },
+            { id: 15, name: "Poster Otomotif : Ferrari", category: "Otomotif", price: 65000, img: "Poster f1 ferari.jpeg" },
+            { id: 15, name: "Poster Formula 1 : Lewis Hamilton", category: "Otomotif", price: 65000, img: "Poster of Lewis Hamilton.jpeg" },
+            { id: 17, name: "Poster Film : Dune Part Two", category: "Film", price: 40000, img: "Poster dune part two.jpeg" },
+            { id: 18, name: "Poster Film : The Godfather", category: "Film", price: 40000, img: "Poster The Godfather.jpeg" },
+            { id: 19, name: "Poster Film : Interstellae", category: "Film", price: 45000, img: "Poster Interstellar.jpeg" },
+            { id: 20, name: "Poster Film : The Countjuring", category: "Film", price: 30000, img: "Poster The Counjuring.jpeg" },
+            { id: 21, name: "Poster Film : Spider-Men", category: "Film", price: 32000, img: "Poster Spider man.jpeg" },
+            { id: 22, name: "Poster Film : 12 Angry Men", category: "Film", price: 35000, img: "Poster 12 Angry Men.jpeg" },
+            { id: 23, name: "Poster Band : Tylor Swift ", category: "Musik", price: 60000, img: "Poster Tylor Swift Eras Hour.jpeg" },
+            { id: 24, name: "Poster Band : Artic Monkey AM", category: "Musik", price: 38000, img: "Poster Artic Monkey.jpeg" },
+            { id: 25, name: "Poster Band Indie : The Strokes", category: "Musik", price: 20000, img: "Poster The strokes.jpeg" },
+            { id: 26, name: "Poster Edukasi : Peta Dunia Vintage", category: "Edukasi & Pemandangan", price: 55000, img: "Poster Peta Dunia.jpeg" },
+            { id: 27, name: "Poster Edukasi : Solar System", category: "Edukasi & Pemandangan", price: 50000, img: "Poster tata surya.jpeg" },
+            { id: 28, name: "Poster Pemandangan : Gunung Fuji", category: "Edukasi & Pemandangan", price: 58000, img: "Poster gunung fuji.jpeg" },
+            { id: 29, name: "Poster Destinasi : Raja Ampat", category: "Edukasi & Pemandangan", price: 50000, img: "Poster Raja Ampat.jpeg" },
+            { id: 30, name: "Poster Peta : New York City Subway", category: "Edukasi & Pemandangan", price: 55000, img: "Poster peta new york subway.jpeg" },
+        ];
+
+        let cart = [];
+        const productListEl = document.getElementById('product-list');
+        const cartItemsEl = document.getElementById('cart-items-container');
+        const cartTotalEl = document.getElementById('cart-total');
+        const cartCountEl = document.querySelector('.cart-count');
+
+        // --- RENDER PRODUK ---
+        function renderProducts(filter = 'all', sort = 'default') {
+            productListEl.innerHTML = '';
+            
+            let filtered = products.filter(p => filter === 'all' || p.category === filter);
+            
+            if (sort === 'low') filtered.sort((a, b) => a.price - b.price);
+            if (sort === 'high') filtered.sort((a, b) => b.price - a.price);
+
+            filtered.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <img src="${p.img}" alt="${p.name}" class="p-img">
+                    <div class="p-name">${p.name}</div>
+                    <div class="p-price">Rp ${p.price.toLocaleString('id-ID')}</div>
+                    <button class="add-cart" onclick="addToCart(${p.id})">Tambah ke Keranjang</button>
+                `;
+                productListEl.appendChild(card);
+            });
+        }
+
+        // --- FILTER & SORT ---
+        document.querySelectorAll('.cat-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                renderProducts(e.target.dataset.cat, document.getElementById('sort-filter').value);
+            });
+        });
+
+        document.getElementById('sort-filter').addEventListener('change', (e) => {
+            const activeCat = document.querySelector('.cat-btn.active').dataset.cat;
+            renderProducts(activeCat, e.target.value);
+        });
+
+        // --- CART FUNCTIONALITY ---
+        function toggleCart() {
+            document.getElementById('cart-overlay').classList.toggle('active');
+        }
+
+        function addToCart(id) {
+            const item = products.find(p => p.id === id);
+            const existing = cart.find(c => c.id === id);
+            
+            if (existing) {
+                existing.qty++;
+            } else {
+                cart.push({ ...item, qty: 1 });
+            }
+            updateCartUI();
+            toggleCart(); 
+        }
+
+        function updateQty(id, change) {
+            const item = cart.find(c => c.id === id);
+            if (item) {
+                item.qty += change;
+                if (item.qty <= 0) cart = cart.filter(c => c.id !== id);
+                updateCartUI();
+            }
+        }
+
+        function updateCartUI() {
+            cartItemsEl.innerHTML = '';
+            let total = 0;
+            let count = 0;
+
+            if (cart.length === 0) {
+                cartItemsEl.innerHTML = '<p style="text-align:center; margin-top:20px;">Keranjang kosong.</p>';
+            } else {
+                cart.forEach(item => {
+                    total += item.price * item.qty;
+                    count += item.qty;
+                    
+                    const div = document.createElement('div');
+                    div.className = 'cart-item';
+                    div.innerHTML = `
+                        <div class="item-info">
+                            <h4>${item.name}</h4>
+                            <div>Rp ${item.price.toLocaleString('id-ID')}</div>
+                        </div>
+                        <div class="item-controls">
+                            <button class="qty-btn" onclick="updateQty(${item.id}, -1)">-</button>
+                            <span>${item.qty}</span>
+                            <button class="qty-btn" onclick="updateQty(${item.id}, 1)">+</button>
+                        </div>
+                    `;
+                    cartItemsEl.appendChild(div);
+                });
+            }
+
+            cartTotalEl.innerText = 'Rp ' + total.toLocaleString('id-ID');
+            cartCountEl.innerText = count;
+        }
+
+        // --- CHECKOUT WHATSAPP ---
+        function checkoutWA() {
+            if (cart.length === 0) return alert("Keranjang kosong!");
+            
+            const name = document.getElementById('cust-name').value;
+            const address = document.getElementById('cust-address').value;
+            
+            if (!name || !address) return alert("Harap isi Nama dan Alamat!");
+
+            let message = `Halo Admin, saya ingin memesan:\n\n`;
+            let total = 0;
+
+            cart.forEach(item => {
+                const subtotal = item.price * item.qty;
+                message += `- ${item.name} (${item.qty}x) = Rp ${subtotal.toLocaleString('id-ID')}\n`;
+                total += subtotal;
+            });
+
+            message += `\nTotal: Rp ${total.toLocaleString('id-ID')}\n`;
+            message += `\nNama: ${name}\nAlamat: ${address}`;
+
+            const phone = "6288289750873"; // GANTI NOMOR WA DISINI (Format: 628...)
+            const url = `https://wa.me/6288289750873?text=${encodeURIComponent(message)}`;
+            
+            window.open(url, '_blank');
+        }
+
+        // --- DARK MODE ---
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('click', () => {
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            themeToggle.innerText = isDark ? '🌙' : '☀️';
+        });
+
+        // Init
+        renderProducts();
+    </script>
+</body>
+</html>
